@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify, session
 from flask_session import Session
 import models
 import datetime
+from spider import spider
 
 app = Flask(__name__)
 
@@ -48,7 +49,7 @@ def login():
         if len(users) == 0:
             return returns(2, '', 'please signup first')
         elif users[0].password != data['password']:
-            return returns(3, '', 'password or nickname error')
+            return returns(1, '', 'password or nickname error')
         else:
             session['userId'] = users[0].id
     else:
@@ -66,23 +67,80 @@ def logout():
 def search():
     data = request.get_json()
     user_id = session.get("userId")
+    books_data = []
     if user_id is None:
-        return returns('4', '', 'need login again')
-    if data.__contains__('isbn') and data.__contains__('author') and data.__contains__('title'):
-
+        return returns('2', '', 'need login again')
+    if data.__contains__('page'):
+        page = int(data['page'])
     else:
-        returns(5, '', 'isbn author title missing')
-
-    return returns(200, 'success', '')
+        page = 1
+    if data.__contains__('isbn') and data.__contains__('author') and data.__contains__('title'):
+        params = []
+        if data.__contains__('isbn'):
+            params.append(models.Book.isbn.like("%"+data['isbn']+"%"))
+        if data.__contains__('author'):
+            params.append(models.Book.isbn.like("%"+data['author']+"%"))
+        if data.__contains__('title'):
+            params.append(models.Book.title.like("%"+data['title']+"%"))
+        books = db.query(models.Book).filter(*params).offset((page - 1) * 10).limit(10)
+        for book in books:
+            books_data.append({
+                "id": book.id,
+                "isbn": book.isbn,
+                "author": book.author,
+                "title": book.title,
+                "year": book.year
+            })
+    else:
+        returns(1, '', 'isbn author title missing')
+    return returns(200, books_data, '')
 
 
 @app.route("/server/book/getDetail", methods=['post'])
 def detail():
     data = request.get_json()
-    return returns(200, 'success', '')
+    user_id = session.get("userId")
+    if user_id is None:
+        return returns('2', '', 'need login again')
+    if not data.__contains__('id'):
+        return returns('1', '', 'id missing')
+    book_data = db.query(models.Book).filter(models.Book.id == data['id']).all()
+    comments = book_data[0].Comment.all()
+    comment_data = []
+    for c in comments:
+        comment_data.append({
+            "text": c.text,
+            "time": c.createdTime,
+            "nickname": c.User.all()[0].nickname
+        })
+    s_d = spider(book_data[0].isbn)
+    return_data = {
+        "id": book_data[0].id,
+        "isbn": book_data[0].isbn,
+        "author": book_data[0].author,
+        "title": book_data[0].title,
+        "year": book_data[0].year,
+        "goodReads": s_d,
+        "comments": comment_data
+    }
+    return returns(200, return_data, '')
 
 
 @app.route("/server/book/comment", methods=['post'])
 def comment():
     data = request.get_json()
+    user_id = session.get("userId")
+    if user_id is None:
+        return returns('2', '', 'need login again')
+    if data.__contains__('score') and data.__contains__('text') and data.__contains__('bookId'):
+        book_id = data['bookId']
+        score = int(data['score'])
+        if score > 5:
+            return returns('1', '', 'score or text error')
+        text = data['text']
+        c = models.Comment(text=text, score=score, createdTime=datetime.datetime.now(), userId=user_id, bookId=book_id)
+        db.add(c)
+        db.commit()
+    else:
+        return returns('1', '', 'score or text missing')
     return returns(200, 'success', '')
