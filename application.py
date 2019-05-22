@@ -79,7 +79,7 @@ def search():
         if data.__contains__('isbn'):
             params.append(models.Book.isbn.like("%"+data['isbn']+"%"))
         if data.__contains__('author'):
-            params.append(models.Book.isbn.like("%"+data['author']+"%"))
+            params.append(models.Book.author.like("%"+data['author']+"%"))
         if data.__contains__('title'):
             params.append(models.Book.title.like("%"+data['title']+"%"))
         books = db.query(models.Book).filter(*params).offset((page - 1) * 10).limit(10)
@@ -93,7 +93,7 @@ def search():
             })
     else:
         returns(1, '', 'isbn author title missing')
-    return returns(200, books_data, '')
+    return returns(200, {'data': books_data, 'total': len(db.query(models.Book).filter(*params).all())}, '')
 
 
 @app.route("/server/book/getDetail", methods=['post'])

@@ -13,7 +13,7 @@ class User(base):
     password = Column(String, nullable=False)
     createdTime = Column(TIMESTAMP, nullable=False)
 
-    Comment = relationship("Comment", back_populates="User", lazy="dynamic")
+    Comment = relationship("Comment", back_populates="User")
 
 
 class Book(base):
@@ -25,7 +25,7 @@ class Book(base):
     author = Column(String, nullable=False)
     year = Column(String, nullable=False)
 
-    Comment = relationship("Comment", back_populates="Book", lazy="dynamic")
+    Comment = relationship("Comment", back_populates="Book")
 
 
 class Comment(base):
@@ -37,10 +37,10 @@ class Comment(base):
     score = Column(INTEGER, nullable=False)
 
     userId = Column(INTEGER, ForeignKey('User.id'))
-    User = relationship("User", back_populates="Comment", lazy="dynamic")
+    User = relationship("User", back_populates="Comment")
 
     bookId = Column(INTEGER, ForeignKey("Book.id"))
-    Book = relationship("Book", back_populates="Comment", lazy="dynamic")
+    Book = relationship("Book", back_populates="Comment")
 
 
 def create(postgresUrl):

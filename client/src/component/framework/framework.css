@@ -1,0 +1,12 @@
+#components-layout-demo-side .logo {
+    height: 32px;
+    background: rgba(255,255,255,.2);
+    margin: 16px;
+}
+
+div.systemName {
+    margin-top: 20px;
+    text-align: center;
+    padding: 5px;
+    margin-bottom: 20px;
+}
