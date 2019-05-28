@@ -23,6 +23,7 @@ const mapDispatchToProps = dispatch => {
                 }).then((res) => {
                     if (res.data.code === code.SUCCESS) {
                         browserHistory.push('/admin/search');
+                        localStorage.setItem('username', nickname);
                         dispatch(login())
                     } else {
                         message.error('密码或账号错误');

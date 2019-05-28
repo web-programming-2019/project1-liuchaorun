@@ -105,22 +105,26 @@ def detail():
     if not data.__contains__('id'):
         return returns('1', '', 'id missing')
     book_data = db.query(models.Book).filter(models.Book.id == data['id']).all()
-    comments = book_data[0].Comment.all()
+    comments = db.query(models.Comment).filter(models.Comment.bookId == book_data[0].id).order_by(models.Comment.createdTime.desc())
     comment_data = []
     for c in comments:
         comment_data.append({
-            "text": c.text,
-            "time": c.createdTime,
-            "nickname": c.User.all()[0].nickname
+            "content": c.text,
+            "datetime": c.createdTime,
+            "author": db.query(models.User).filter(models.User.id == c.userId).all()[0].nickname
         })
-    s_d = spider(book_data[0].isbn)
+
+    #s_d = spider(book_data[0].isbn)
+    s_d = 5
     return_data = {
-        "id": book_data[0].id,
-        "isbn": book_data[0].isbn,
-        "author": book_data[0].author,
-        "title": book_data[0].title,
-        "year": book_data[0].year,
-        "goodReads": s_d,
+        "bookDetails": {
+            "id": book_data[0].id,
+            "isbn": book_data[0].isbn,
+            "author": book_data[0].author,
+            "title": book_data[0].title,
+            "year": book_data[0].year,
+            "goodReads": s_d,
+        },
         "comments": comment_data
     }
     return returns(200, return_data, '')

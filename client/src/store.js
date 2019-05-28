@@ -19,6 +19,16 @@ const initValues = {
         isbn: '',
         title: '',
         author: '',
+    },
+    book: {
+        comments: [{
+            author: 'a',
+            datetime: new Date().toString(),
+            content: 'a'
+        }],
+        value: '',
+        submitting: false,
+        bookDetails: {},
     }
 };
 
