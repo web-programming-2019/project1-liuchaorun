@@ -29,6 +29,7 @@ const initValues = {
         value: '',
         submitting: false,
         bookDetails: {},
+        score: 0
     }
 };
 

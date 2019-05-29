@@ -20,6 +20,11 @@ const book = (state = initState, action) => {
                 comments: action.data.comments,
                 bookDetails: action.data.bookDetails,
             };
+        case actionType.SCORE_CHANGE:
+            return {
+                ...state,
+                score: action.score
+            };
         default:
             return state;
     }

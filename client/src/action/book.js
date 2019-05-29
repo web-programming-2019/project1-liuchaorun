@@ -19,3 +19,10 @@ export function change(value) {
         value,
     }
 }
+
+export function setScore(score) {
+    return {
+        type: actionType.SCORE_CHANGE,
+        score,
+    }
+}

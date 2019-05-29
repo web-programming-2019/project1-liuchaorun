@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, create_engine, ForeignKey, TIMESTAMP, INTEGER
+from sqlalchemy import Column, String, create_engine, ForeignKey, TIMESTAMP, INTEGER, FLOAT
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker, relationship
 
@@ -34,7 +34,7 @@ class Comment(base):
     id = Column(INTEGER, autoincrement=True, primary_key=True)
     text = Column(String, nullable=False)
     createdTime = Column(TIMESTAMP, nullable=False)
-    score = Column(INTEGER, nullable=False)
+    score = Column(FLOAT, nullable=False)
 
     userId = Column(INTEGER, ForeignKey('User.id'))
     User = relationship("User", back_populates="Comment")

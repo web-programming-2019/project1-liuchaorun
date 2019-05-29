@@ -1,18 +1,19 @@
 import Book from '../../component/book/book';
 import {connect} from 'react-redux';
-import {setData, submit, change} from '../../action/book';
+import {setData, submit, change, setScore} from '../../action/book';
 import {browserHistory} from "react-router";
 import {request} from "../../utils/request";
 import {code} from "../../utils/utils";
 import {message} from "antd";
 
 const mapStateToProps = state => {
-    console.log(state.book);
+    console.log(state);
     return {
         comments: state.book.comments,
         value: state.book.value,
         bookDetails: state.book.bookDetails,
         submitting: state.book.submitting,
+        score: state.book.score
     }
 };
 
@@ -47,6 +48,9 @@ const mapDispatchToProps = dispatch => {
                     message.error('网络错误请刷新！');
                 }
             });
+        },
+        handleScore: (score) => {
+            dispatch(setScore(score));
         },
         handleSubmit: function (score, bookId, text)  {
             dispatch(submit());

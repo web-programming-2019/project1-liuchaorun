@@ -1,5 +1,6 @@
 import React from 'react';
 import { Descriptions, Comment, List, Form, Input, Button, Rate } from 'antd';
+import {getDateDiff} from '../../utils/utils'
 import PropTypes from 'prop-types';
 import './book.css'
 
@@ -11,13 +12,19 @@ const CommentList = ({ comments }) => (
         dataSource={comments}
         header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
         itemLayout="horizontal"
-        renderItem={props => <Comment {...props} />}
+        renderItem={props => <Comment author={props.author} datetime={getDateDiff(props.datetime)} content={
+            <div>
+                <Rate disabled defaultValue={props.score} allowHalf/>
+                <div>{props.content}</div>
+            </div>
+        } />}
     />
 );
 
-const Editor = ({ onChange, onSubmit, submitting, value }) => (
+const Editor = ({ onChange, onSubmit, submitting, value, score, handleScore }) => (
     <div>
         <Form.Item>
+            <Rate defaultValue={0} value={score} allowHalf onChange={handleScore}/>
             <TextArea rows={3} onChange={onChange} value={value} />
         </Form.Item>
         <Form.Item>
@@ -34,7 +41,7 @@ class Book extends React.Component {
     }
 
     render() {
-        const {comments, value, bookDetails, submitting, handleChange, handleSubmit} = this.props;
+        const {comments, value, bookDetails, submitting, handleChange, handleSubmit, score, handleScore} = this.props;
         return (
             <div>
                 <Descriptions title="书籍详细信息">
@@ -47,9 +54,11 @@ class Book extends React.Component {
                 <Comment className="editor" author={localStorage.getItem('username')} content={
                     <Editor
                         onChange={e => handleChange(e.target.value)}
-                        onSubmit={() => handleSubmit(5, this.props.params.id, value)}
+                        onSubmit={() => handleSubmit(score, this.props.params.id, value)}
                         submitting={submitting}
                         value={value}
+                        score={score}
+                        handleScore={handleScore}
                     />
                 }/>
                 {comments.length > 0 && <CommentList comments={comments} />}
@@ -63,6 +72,7 @@ Book.protoType = {
         author: PropTypes.string.isRequired,
         content: PropTypes.string.isRequired,
         datetime: PropTypes.string.isRequired,
+        score: PropTypes.number.isRequired,
     }).isRequired,
     value: PropTypes.string.isRequired,
     bookDetails: PropTypes.shape({
@@ -77,6 +87,8 @@ Book.protoType = {
     handleChange: PropTypes.func.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     getData: PropTypes.func.isRequired,
+    score: PropTypes.number.isRequired,
+    handleScore: PropTypes.func.isRequired,
 };
 
 export default Book;

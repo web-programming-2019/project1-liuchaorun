@@ -110,8 +110,9 @@ def detail():
     for c in comments:
         comment_data.append({
             "content": c.text,
-            "datetime": c.createdTime,
-            "author": db.query(models.User).filter(models.User.id == c.userId).all()[0].nickname
+            "datetime": c.createdTime.strftime("%Y-%m-%d %H:%M:%S"),
+            "author": db.query(models.User).filter(models.User.id == c.userId).all()[0].nickname,
+            "score": c.score
         })
 
     #s_d = spider(book_data[0].isbn)
@@ -138,7 +139,8 @@ def comment():
         return returns('2', '', 'need login again')
     if data.__contains__('score') and data.__contains__('text') and data.__contains__('bookId'):
         book_id = data['bookId']
-        score = int(data['score'])
+        score = float(data['score'])
+        print(score)
         if score > 5:
             return returns('1', '', 'score or text error')
         text = data['text']
