@@ -16,7 +16,13 @@ const mapDispatchToProps = dispatch => {
             dispatch(toggle());
         },
         onClick: (o) => {
-            browserHistory.push('/framework/search');
+            if (o.key === '1') {
+                browserHistory.push('/admin/search');
+            }
+            if (o.key === '2') {
+                localStorage.clear();
+                browserHistory.push('/login')
+            }
         }
     }
 };

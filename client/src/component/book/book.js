@@ -12,12 +12,16 @@ const CommentList = ({ comments }) => (
         dataSource={comments}
         header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
         itemLayout="horizontal"
-        renderItem={props => <Comment author={props.author} datetime={getDateDiff(props.datetime)} content={
-            <div>
-                <Rate disabled defaultValue={props.score} allowHalf/>
-                <div>{props.content}</div>
-            </div>
-        } />}
+        renderItem={(props, index) => {
+            console.log(comments);
+            console.log(props.score);
+            return <Comment key={index} author={props.author} datetime={getDateDiff(props.datetime)} content={
+                <div>
+                    <Rate disabled defaultValue={props.score} value={props.score} allowHalf/>
+                    <div>{props.content}</div>
+                </div>
+            } />
+        }}
     />
 );
 
@@ -50,6 +54,8 @@ class Book extends React.Component {
                     <DescriptionsItem label="title">{bookDetails.title}</DescriptionsItem>
                     <DescriptionsItem label="year">{bookDetails.year}</DescriptionsItem>
                     <DescriptionsItem label="goodReads">{bookDetails.goodReads}</DescriptionsItem>
+                    <DescriptionsItem label="comments">{bookDetails.comments}</DescriptionsItem>
+                    <DescriptionsItem label="averageScore">{bookDetails.averageScore}</DescriptionsItem>
                 </Descriptions>
                 <Comment className="editor" author={localStorage.getItem('username')} content={
                     <Editor
@@ -82,6 +88,8 @@ Book.protoType = {
         title: PropTypes.string.isRequired,
         year: PropTypes.string.isRequired,
         goodReads: PropTypes.number.isRequired,
+        averageScore: PropTypes.number.isRequired,
+        comments: PropTypes.number.isRequired
     }).isRequired,
     submitting: PropTypes.bool.isRequired,
     handleChange: PropTypes.func.isRequired,

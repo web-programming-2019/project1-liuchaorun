@@ -21,7 +21,7 @@ const Framework = ({collapsed, onToggle, onClick, children}) => (
                     <Icon type="pie-chart"/>
                     <span>搜索</span>
                 </Menu.Item>
-                <Menu.Item ket="2">
+                <Menu.Item key="2">
                     <Icon type="logout" />
                     <span>退出</span>
                 </Menu.Item>

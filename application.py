@@ -150,3 +150,25 @@ def comment():
     else:
         return returns('1', '', 'score or text missing')
     return returns(200, 'success', '')
+
+
+@app.route("/api/<isbn>", methods=['get'])
+def getIsbn(isbn):
+    book_data = db.query(models.Book).filter(models.Book.isbn == isbn).all()
+    comments = db.query(models.Comment).filter(models.Comment.bookId == book_data[0].id).order_by(models.Comment.createdTime.desc())
+    average_score = 0
+    review_count = 0
+    for c in comments:
+        review_count += 1
+        average_score += c.score
+
+    average_score = average_score / review_count
+    return_data = {
+        "isbn": book_data[0].isbn,
+        "author": book_data[0].author,
+        "title": book_data[0].title,
+        "year": book_data[0].year,
+        "review_count": review_count,
+        "average_score": average_score
+    }
+    return jsonify(return_data)
