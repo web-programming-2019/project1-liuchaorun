@@ -12,7 +12,7 @@
     "redux": "^4.0.1",
     "react-redux": "^6.0.1",
     "redux-devtools": "^3.5.0",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "prop-types": "^15.7.2",
     "source-map-explorer": "^1.8.0"
   },
